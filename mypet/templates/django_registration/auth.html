@@ -1,0 +1,15 @@
+{% if form.errors %}
+    <h3 class="h5 mb-3 ">Your username and password didn't match.<br/>
+    <strong>Please try again </strong></h3>
+{% else %}
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+{% endif %}
+    <label for="inputUsername" class="visually-hidden">Username</label>
+    <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required autofocus>
+    <label for="inputPassword" class="visually-hidden">Password</label>
+    <input type="password" name="password" id="id_password" class="form-control" placeholder="Password" required>
+    <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+    <div class="d-grid gap-2">
+        <button  class="w-100 btn btn-lg btn-outline-primary" type="submit">Log in</button>
+        <a class="w-100 btn btn-lg btn-outline-success" href="{% url 'registration_register' %}">Create account</a>
+    </div>

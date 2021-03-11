@@ -1,0 +1,23 @@
+{% extends 'django_registration/base.html' %}
+{% load static %}
+
+{% block body%}
+    <main class="form-registration">
+      <form class="form-registration" role="form" method="post" action=".">
+        {% csrf_token %}
+        <img class="mb-4" src="{% static 'images/favicon.svg' %}" alt="" width="128" height="128">
+        <h3 class="h1 mb-3 ">Registration form</h3>
+        <label for="inputUsername" class="visually-hidden">Username</label>
+        <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputEmail" class="visually-hidden">Email</label>
+        <input type="email" name="email" id="id_email" class="form-control" placeholder="email@examlpe.com" required autofocus>
+        <label for="inputPassword1" class="visually-hidden">Password1</label>
+        <input type="password" name="password1" id="id_password1" class="form-control" placeholder="Password" required autofocus>
+        <label for="inputPassword2" class="visually-hidden">Password2</label>
+        <input type="password" name="password2" id="id_password2" class="form-control" placeholder="Confirm password" required autofocus>
+
+         <button class="w-100 btn btn-lg btn-success" type="submit">Create account</button>
+      </form>
+    </main>
+
+{% endblock %}

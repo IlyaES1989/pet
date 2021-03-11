@@ -1,0 +1,13 @@
+{% extends 'django_registration/base.html' %}
+{% load static %}
+
+{% block body%}
+  <main class="form-signin">
+      <form class="form-signin" role="form" method="post" action=".">
+           {% csrf_token %}
+        <img class="mb-4" src="{% static 'images/favicon.svg' %}" alt="" width="128" height="128">
+          <div class="alert alert-primary" role="alert">Registration successful!</div>
+          {% include 'django_registration/auth.html'%}
+      </form>
+  </main>
+{% endblock %}
