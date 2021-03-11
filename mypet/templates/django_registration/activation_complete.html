@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Act complete</title>
-</head>
-<body>
+{% extends 'django_registration/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block title%} Activation complete {% endblock%}
+
+{% block body%}
+
+    <main class="form-signin">
+      <form class="form-signin" role="form" method="post" action=".">
+        {% csrf_token %}
+        <img class="mb-4" src="{% static 'images/favicon.svg' %}" alt="" width="128" height="128">
+          <div class="alert alert-primary" role="alert">
+              Your email is confirmed.<br/>
+              <strong>Welcome!</strong> </div>
+          {% include 'django_registration/auth.html'%}
+      </form>
+    </main>
+{% endblock %}}

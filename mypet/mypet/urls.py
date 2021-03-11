@@ -33,7 +33,11 @@ urlpatterns = [
         template_name='registration/password_reset_done.html', )),
     path('accounts/reset/done/', auth_views.LoginView.as_view(
         template_name='registration/password_reset_complete.html', )),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/activate/', ActivationView.as_view(), name='registration_activate'),
+    path('accounts/activate/complete/', auth_views.LoginView.as_view(
+        template_name='django_registration/activation_complete.html', )),
     path('accounts/', include('django_registration.backends.activation.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
