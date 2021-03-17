@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import os
 
 def user_directory_path(instance, filename):
-    return 'user_{0}/{1}'.format(instance.user.id, filename)
-
+    return os.path.join(
+      "user_%d" % instance.report.user.id, '%s' % filename)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -16,38 +17,37 @@ class UserProfile(models.Model):
 
 class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    type = models.CharField(max_length=256)
-    last = models.FileField(upload_to='last_report')
-    last_year = models.FileField(upload_to='last_y_report')
-    tag = models.CharField(max_length=128)
+    item = models.CharField(max_length=256, default='')
+    last = models.FileField(upload_to='last_report', default='')
+    last_year = models.FileField(upload_to='last_y_report', default='')
+    tag = models.CharField(max_length=128, default='')
+    month = models.PositiveSmallIntegerField(default=0)
+    year = models.PositiveSmallIntegerField(default=1900)
+    open_last_report = models.BooleanField(default=True)
+
 
     def __str__(self):
-        return self.type
+        return self.item
+
+
+class PreparationFile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Report, on_delete=models.CASCADE)
+    primarily_file = models.FileField(upload_to='prepare', default='')
+    ready_file = models.FileField(upload_to='prepare', default='')
+    tage_file = models.CharField(max_length=64, default='')
+
+    def __str__(self):
+        return self.tage_file
 
 
 class Outcome(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     time = models.DateTimeField()
-    filename = models.CharField(max_length=256)
-    file = models.FileField(upload_to='user_directory_path')
+    file = models.FileField(upload_to=user_directory_path)
 
     def __str__(self):
-        return self.filename
-
-
-class Variable(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    month = models.PositiveSmallIntegerField(default=1)
-    year = models.PositiveSmallIntegerField(default=2021)
-    open_last_report = models.BooleanField()
-
-    def save(self, *args, **kargs):
-        if self.month not in range(1, 13):
-            self.month = 1
-
-        super(Variable, self).save(*args, **kargs)
-
-    def __str__(self):
-        return str(self.user)
+        return str(self.file.name)
 
 
