@@ -1,156 +1,57 @@
 <!doctype html>
 {% extends 'sloth/base.html' %}
 {% load static %}
+{% load tz %}
 
 
 {% block body %}
-<div class="container-fluid">
-  <div class="row">
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-      <div class="position-sticky pt-3">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">
-              <span data-feather="home"></span>
-              Create report
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file-text"></span>
-              Current month
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-   <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-          </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-            <span data-feather="calendar"></span>
-            This week
-          </button>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Create report</h1>
+</div>
 
+<!-- Setting report -->
+<div class="row">
+  <div class="col-sm-6 p-0">
+    <div class="card">
+      <div class="container mt-3">
+        <div class="d-flex pt-1 pb-2 mb-3 border-bottom">
+          <h3> Setting</h3>
         </div>
+        <form  enctype="multipart/form-data" class="form-registration" role="form" method="post"
+               action="{% url 'index' %}">
+          {% csrf_token %}
+          <label class="form-label"><strong>Report's type</strong></label>
+          <div class="input-group mb-3">
+            {{r_form.item}}
+          </div>
+          <label class="form-label"><strong> Raw data</strong></label>
+          <div class="input-group mb-3">
+            {{p_form.primarily_file}}
+          </div>
+          <div class="form-check form-switch">
+            {{r_form.open_last_report}}
+            <label class="form-check-label"><strong> Use last report</strong></label>
+          </div>
+          <label class="form-label"><strong>Last report</strong></label>
+          <div class="input-group mb-3">
+            {{r_form.last}}
+          </div>
+          <label class="form-label"><strong>Last year report</strong> </label>
+          <div class="input-group mb-3">
+            {{r_form.last_year}}
+          </div>
+          <label class="form-label">The reporting month</label>
+          <div class="input-group mb-3">
+            {{r_form.month}}
+          </div>
+          <label class="form-label">The reporting year</label>
+          <div class="input-group mb-3">
+            {{r_form.year}}
+          </div>
+          <button class="w-100 btn btn-lg btn-success mb-3" type="submit"> >>First step >></button>
+        </form>
       </div>
-  <!-- Setting report -->
-     <div class="row">
-       <!-- First step -->
-          <div class="col-sm-4 p-0">
-            <div class="card">
-              <div class="container mt-3">
-                <div class="d-flex pt-1 pb-2 mb-3 border-bottom">
-                  <h3> Setting</h3>
-                </div>
-                  <form  enctype="multipart/form-data" class="form-registration" role="form" method="post"
-                         action="{% url 'adjust' %}">
-                  {% csrf_token %}
-
-                    <label class="form-label"><strong>Report's type</strong></label>
-                    <div class="input-group mb-3">
-                      {{r_form.item}}
-                    </div>
-                    <label class="form-label"><strong> Raw data</strong></label>
-                    <div class="input-group mb-3">
-                      {{p_form.primarily_file}}
-                    </div>
-                    <div class="form-check form-switch">
-                      {{r_form.open_last_report}}
-                      <label class="form-check-label" for="flexSwitchCheckDefault"><strong> Use last report</strong></label>
-                    </div>
-                    <label class="form-label"><strong>Last report</strong></label>
-                    <div class="input-group mb-3">
-                      {{r_form.last}}
-                    </div>
-                    <label class="form-label"><strong>Last year report</strong> </label>
-                    <div class="input-group mb-3">
-                      {{r_form.last_year}}
-                    </div>
-                    <label class="form-label">The reporting month</label>
-                    <div class="input-group mb-3">
-                      {{r_form.month}}
-                    </div>
-                    <label class="form-label">The reporting year</label>
-                    <div class="input-group mb-3">
-                      {{r_form.year}}
-                    </div>
-                    <button class="w-100 btn btn-lg btn-success mb-3" type="submit"" > >>First step >></button>
-
-                  </form>
-              </div>
-            </div>
-          </div>
-
-      <!-- Second step -->
-          <div class="col-sm-4 p-0">
-            <div class="card">
-              <div class="container mt-3">
-                <div class="d-flex pt-1 pb-2 mb-3 border-bottom">
-                  <h3> Check</h3>
-                </div>
-                  <form  enctype="multipart/form-data" class="form-registration" role="form" method="post" action=".">
-                  {% csrf_token %}
-
-                    <div class="accordion" id="accordionExample">
-                      <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Auto-preparing files
-                          </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                            <ul class="list-group">
-                              {% if preparing_files%}
-                                {% for file in preparing_files %}
-                                <li class="list-group-item"><a href="{{ file.ready_file.url }}"> {{ file.ready_file.short_name}}</a>
-                                </li>
-                              </ul>
-                              {% endfor %}
-                            {% endif%}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="form-check pt-3 pb-3 ">
-                      <input class="form-check-input" type="checkbox" value="True" id="ready_files_check" checked="checked:none">
-                      <label class="form-check-label" for="flexSwitchCheckDefault"><strong> All files are right</strong></label>
-                    </div>
-                    <div id="replase_files">
-                      <label class="form-label">Replace files</label>
-                      <div class="input-group mb-3">
-                        {{p_form.ready_file}}
-                      </div>
-                    </div>
-                    <button class="w-100 btn btn-lg btn-success mb-3" type="submit" id="second_step"> >>Second step >></button>
-                  </form>
-              </div>
-            </div>
-          </div>
-
-       <!-- Outcome -->
-          <div class="col-sm-4 p-0">
-            <div class="card">
-              <div class="container mt-3">
-                <div class="d-flex pt-1 pb-2 mb-3 border-bottom">
-                  <h3> Outcome</h3>
-                </div>
-                {% for file in outcome %}
-                <a href="{{file.file.url}}">{{ file.file.short_name}} {{file.time_str}}</a>
-                {% endfor%}
-              </div>
-            </div>
-          </div>
-     </div>
-
-    </main>
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -3,9 +3,11 @@ from django.contrib.auth.models import User
 
 import os
 
+
 def user_directory_path(instance, filename):
     return os.path.join(
       "user_%d" % instance.report.user.id, '%s' % filename)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -25,6 +27,8 @@ class Report(models.Model):
     year = models.PositiveSmallIntegerField(default=1900)
     open_last_report = models.BooleanField(default=True)
 
+    class Meta:
+        unique_together = ['user', 'item']
 
     def __str__(self):
         return self.item
@@ -33,21 +37,19 @@ class Report(models.Model):
 class PreparationFile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Report, on_delete=models.CASCADE)
-    primarily_file = models.FileField(upload_to='prepare', default='')
     ready_file = models.FileField(upload_to='prepare', default='')
-    tage_file = models.CharField(max_length=64, default='')
+    file_tag = models.CharField(max_length=64, default='')
 
     def __str__(self):
-        return self.tage_file
+        return self.file_tag
 
 
 class Outcome(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
-    time = models.DateTimeField()
+    time = models.DateTimeField(blank=True)
     file = models.FileField(upload_to=user_directory_path)
+
 
     def __str__(self):
         return str(self.file.name)
-
-

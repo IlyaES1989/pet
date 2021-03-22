@@ -21,10 +21,11 @@ from django_registration.backends.activation.views import RegistrationView, Acti
 from django.contrib.auth import views as auth_views
 
 from sloth import views
+from sloth.views import Setting
 
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', Setting.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('sloth/', include('sloth.urls')),
     path('accounts/', RegistrationView.as_view(), name='registration_register'),
