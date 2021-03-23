@@ -198,3 +198,34 @@ def update_file(request):
     return redirect('create')
 
 
+class Storage(View):
+
+    def get(self, request):
+        user = get_user(request)
+        report_list = Outcome.objects.filter(user=user).order_by('-time')
+
+        for report in report_list:
+            short_name = name_cutter(report.file.name)
+            report.file.short_name = short_name
+
+        return render(request, 'sloth/storage.html', {'report_list': report_list})
+
+    def post(self, request):
+        result_id = request.POST.get('id')
+        trash = Outcome.objects.get(id=result_id)
+        trash.delete()
+
+        return redirect('storage')
+
+
+def storage(request):
+    if request.method == 'GET':
+        user = get_user(request)
+        report_list = Outcome.objects.filter(user=user).order_by('-time')
+
+        for report in report_list:
+
+            short_name = name_cutter(report.file.name)
+            report.file.short_name = short_name
+
+        return render(request, 'sloth/storage.html', {'report_list': report_list})
