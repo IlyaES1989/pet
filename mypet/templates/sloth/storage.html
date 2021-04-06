@@ -1,0 +1,53 @@
+<!doctype html>
+{% extends 'sloth/base.html' %}
+{% load static %}
+{% load tz %}
+
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Storage reports</h1>
+</div>
+{% if report_list%}
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Report's type</th>
+    <th scope="col">Creation date</th>
+    <th scope="col">File</th>
+  </tr>
+  </thead>
+  {% for report in report_list %}
+  <tbody>
+  <form method="post" action="{% url 'storage'%}">
+    {% csrf_token %}
+    <input class="input-group-text" style="display:none" name="id" value="{{ report.id }}">
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{report.item}}</td>
+      <td>{{report.time}}</td>
+      <td>
+        <a class="btn btn-sm btn-success" href="{{report.file.url}}"><i data-feather="download"></i></a>
+        <button class="btn btn-sm btn-danger" type="submit"><i data-feather="trash-2"></i></button>
+      </td>
+    </tr>
+  </form>
+  </tbody>
+  {% endfor%}
+</table>
+{% else %}
+<h4> There are not any reports!</h4>
+{% endif%}
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

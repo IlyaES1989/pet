@@ -133,3 +133,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/mypet/sloth/xls_script/report_scripts/report_setting.py

@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django_registration.backends.activation.views import RegistrationView, ActivationView
+from django_registration.backends.activation.views import (
+    RegistrationView,
+    ActivationView,
+)
 from django.contrib.auth import views as auth_views
 
-from sloth import views
 from sloth.views import Setting
 
 

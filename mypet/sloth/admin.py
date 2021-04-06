@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from . import models
 
 
@@ -7,7 +8,7 @@ class ReportAdmin(admin.ModelAdmin):
 
 
 class OutcomeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'report', 'time', 'file')
+    list_display = ('user', 'item', 'time', 'file')
 
 
 class PreparationFileAdmin(admin.ModelAdmin):

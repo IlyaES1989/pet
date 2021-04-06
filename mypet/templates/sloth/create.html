@@ -1,0 +1,76 @@
+<!doctype html>
+{% extends 'sloth/base.html' %}
+{% load static %}
+{% load tz %}
+
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Create report</h1>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 p-0">
+        <div class="card" style="border-width: 0px">
+            <div class="container mt-3">
+                <div class="d-flex pt-1 pb-2 mb-3 border-bottom">
+                    <h3> Check</h3>
+                </div>
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Auto-preparing files
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                             data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                {% if preparing_files%}
+                                {% for file in preparing_files %}
+                                <form  enctype="multipart/form-data" class="form-registration" role="form" method="post"
+                                       action="{% url 'update' %}">
+                                    {% csrf_token %}
+                                    <div class="input-group mb-1">
+                                        <input class="input-group-text" style="display:none"
+                                               name="up_file"
+                                               value="{{ file.file_tag }}">
+                                    </div>
+                                    <div class="container mx-1 px-1" >
+                                        <div class="row">
+                                            <div class="col px-1">
+                                                <button class="btn w-100 btn-secondary" disabled>
+                                                    Tag: {{file.file_tag}}
+                                                </button>
+                                            </div>
+                                            <div class="col px-1">
+                                                <a class="btn w-100 btn-success" href="{{ file.ready_file.url }}">
+                                                    File: {{ file.ready_file.short_name}}<span></span>
+                                                </a>
+                                            </div>
+                                            <div class="input-group  mt-1 mb-3 px-1"> {{p_form.ready_file}}
+                                                <button class="btn btn-primary" type="submit"><i data-feather="refresh-ccw"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                {% endfor %}
+                                {% endif%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-check pt-3 pb-3 ">
+                    <input class="form-check-input" type="checkbox" value="True" id="ready_files_check" checked>
+                    <label class="form-check-label"><strong> All files are right</strong></label>
+                </div>
+                <form action="{% url 'create' %}" method="POST">
+                    {% csrf_token %}
+                    <button class="w-100 btn btn-lg btn-success mb-3" type="submit" id="second_step"> Create report</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

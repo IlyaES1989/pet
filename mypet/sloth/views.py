@@ -1,3 +1,5 @@
+import re
+
 from django.shortcuts import render
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -8,17 +10,27 @@ from django.core.files import File
 from django.views import View
 from django.db.models import Max
 
-from .models import Report, PreparationFile, Outcome
-from .forms import ReportForm, PreparationFileForm, RawDataForm
+from .models import (
+    Report,
+    PreparationFile,
+    Outcome,
+)
+from .forms import (
+    ReportForm,
+    PreparationFileForm,
+    RawDataForm,
+)
 
-import re
-
-from .xls_script.report_scripts.script import preparation, generate_variable, report_generation, TEMPLATE
+from .xls_script.report_scripts.script import (
+    preparation,
+    generate_variable,
+    report_generation,
+    TEMPLATE,
+)
 
 from .xls_script.classes.report import GenerateReport
 
 
-#   Help function
 def get_user(request):
     user = User.objects.get(username=request.user.username)
     return user
@@ -29,7 +41,6 @@ def name_cutter(long_name):
     return short_name
 
 
-#   Common function and classes
 @method_decorator(login_required, name='dispatch')
 class Setting(View):
     r_form_class = ReportForm
@@ -45,14 +56,16 @@ class Setting(View):
 
     def post(self, request):
         user = get_user(request)
-        item_obj = Report.objects.get(user=user, item=request.POST.get('item'))
         form = self.r_form_class(request.POST, request.FILES)
-        request.session['type_of_report'] = item_obj.id
 
         # If last_year file download - update, else use previous.
-        last_year = request.FILES.get(
-            'last_year',
-            Report.objects.get(user=user, item=request.POST.get('item')).last_year)
+        try:
+            last_year = request.FILES.get(
+                'last_year',
+                Report.objects.get(user=user, item=request.POST.get('item')).last_year)
+        # If last_year file doesn't use in this type of report.
+        except Report.DoesNotExist:
+            last_year = None
 
         if form.is_valid():
             Report.objects.update_or_create(
@@ -63,6 +76,8 @@ class Setting(View):
                           'month': request.POST.get('month'),
                           'year': request.POST.get('year'),
                           'open_last_report': (request.POST.get('open_last_report', False)), })
+            item_obj = Report.objects.get(user=user, item=request.POST.get('item'))
+            request.session['type_of_report'] = item_obj.id
 
         raw_data_form = RawDataForm(request.FILES)
         files = request.FILES.getlist('primarily_file')
@@ -104,7 +119,7 @@ class CreateReport(View):
                 short_name = name_cutter(file.ready_file.name)
                 file.ready_file.short_name = short_name
 
-            outcome = Outcome.objects.filter(user=user, report=item)
+            outcome = Outcome.objects.filter(user=user, item=item)
             for file in outcome:
                 short_name = name_cutter(file.file.name)
                 file.file.short_name = short_name
@@ -124,9 +139,7 @@ class CreateReport(View):
 
     def post(self, request):
         now = timezone.now()
-
         user = get_user(request)
-
         item_id = request.session.get('type_of_report')
         report_obj = Report.objects.get(id=item_id)
         template = TEMPLATE[report_obj.item]
@@ -145,7 +158,6 @@ class CreateReport(View):
                                    last_report=last_report,
                                    last_year_report=last_year_report,
                                    file_tags=file_tags)
-
         sheets_list = report_generation(report_obj.item, sheets)
 
         w_r = GenerateReport(sheets=sheets_list)
@@ -162,18 +174,18 @@ class CreateReport(View):
             (p, new_report_name) = w_r.generate_mutable_part(last_report)
             new_report = File(p, name=new_report_name)
 
-        Outcome.objects.create(user=user, report=report_obj, file=new_report, time=now)
+        Outcome.objects.create(user=user, item=report_obj, file=new_report, time=now)
 
         return redirect('result')
 
 
+@login_required
 def get_result(request):
     if request.method == 'GET':
         user = get_user(request)
         item_id = request.session.get('type_of_report')
-        max_time = Outcome.objects.filter(user=user, report=item_id).aggregate(Max('time'))
-        print('max_time' * 10, max_time)
-        result = Outcome.objects.get(user=user, report=item_id, time=max_time['time__max'])
+        max_time = Outcome.objects.filter(user=user, item=item_id).aggregate(Max('time'))
+        result = Outcome.objects.get(user=user, item=item_id, time=max_time['time__max'])
         short_name = name_cutter(result.file.name)
         result.short_name = short_name
 
@@ -188,7 +200,6 @@ def update_file(request):
         item = Report.objects.get(id=item_id)
         up_tag = request.POST.get('up_file')
         new_file = request.FILES.get('ready_file')
-        print('NEW ' * 10, request.FILES)
 
         form = PreparationFileForm(request.POST, request.FILES)
 
@@ -198,6 +209,7 @@ def update_file(request):
     return redirect('create')
 
 
+@method_decorator(login_required, name='dispatch')
 class Storage(View):
 
     def get(self, request):

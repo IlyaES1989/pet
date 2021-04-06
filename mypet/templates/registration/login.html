@@ -6,11 +6,11 @@
 
 {% block body%}
 
-    <main class="form-signin">
-      <form class="form-signin" role="form" method="post" action=".">
+<main class="form-signin">
+    <form class="form-signin" role="form" method="post" action=".">
         {% csrf_token %}
         <img class="mb-4" src="{% static 'images/favicon.svg' %}" alt="" width="128" height="128">
-          {% include 'django_registration/auth.html'%}
-      </form>
-    </main>
+        {% include 'django_registration/auth.html'%}
+    </form>
+</main>
 {% endblock %}}

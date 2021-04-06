@@ -5,14 +5,14 @@
 
 {% block body%}
 
-    <main class="form-signin">
-      <form class="form-signin" role="form" method="post" action=".">
+<main class="form-signin">
+    <form class="form-signin" role="form" method="post" action=".">
         {% csrf_token %}
         <img class="mb-4" src="{% static 'images/favicon.svg' %}" alt="" width="128" height="128">
-          <div class="alert alert-primary" role="alert">
-              Your email is confirmed.<br/>
-              <strong>Welcome!</strong> </div>
-          {% include 'django_registration/auth.html'%}
-      </form>
-    </main>
+        <div class="alert alert-primary" role="alert">
+            Your email is confirmed.<br/>
+            <strong>Welcome!</strong> </div>
+        {% include 'django_registration/auth.html'%}
+    </form>
+</main>
 {% endblock %}}
